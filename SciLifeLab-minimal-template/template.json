@@ -1,0 +1,177 @@
+{
+    "templateId": "minimal",
+    "organizationId": "SciLifeLab",
+    "version": "1.5.0",
+    "name": "SciLifeLab Minimal",
+    "description": "Template intended for the SciLifeLab DMP, with minimal help text",
+    "license": "CC BY-SA 4.0",
+    "metamodelVersion": 3,
+    "recommendedPackageId": "SciLifeLab:SciLifeLab-DMP:1.2.3",
+    "allowedPackages": [
+        {
+            "orgId": null,
+            "kmId": null,
+            "minVersion": null,
+            "maxVersion": null
+        }
+    ],
+    "formats": [
+        {
+            "uuid": "5594c799-9da3-420e-9a3c-87229940b42e",
+            "name": "JSON Data",
+            "shortName": "json",
+            "icon": "far fa-file",
+            "color": "#f15a24",
+            "steps": [
+                {
+                    "name": "json",
+                    "options": {}
+                }
+            ]
+        },
+        {
+            "uuid": "053aaaa0-170c-4991-bd09-5f7f4aafd568",
+            "name": "HTML Document",
+            "shortName": "html",
+            "icon": "far fa-file-code",
+            "color": "#f15a24",
+            "steps": [
+                {
+                    "name": "jinja",
+                    "options": {
+                        "content-type": "text/html",
+                        "extension": "html",
+                        "template": "scilifelab_minimal.html.j2"
+                    }
+                }
+            ]
+        },
+        {
+            "uuid": "13eb46ba-0c8c-4097-8130-6be4f7089fba",
+            "name": "PDF Document",
+            "shortName": "pdf",
+            "icon": "far fa-file-pdf",
+            "color": "#f15a24",
+            "steps": [
+                {
+                    "name": "jinja",
+                    "options": {
+                        "content-type": "text/html",
+                        "extension": "html",
+                        "template": "scilifelab_minimal.html.j2"
+                    }
+                },
+                {
+                    "name": "wkhtmltopdf",
+                    "options": {}
+                }
+            ]
+        },
+        {
+            "uuid": "c6a115ed-e6d3-41df-8427-7c528cdc9e7a",
+            "name": "LaTeX Document",
+            "shortName": "latex",
+            "icon": "far fa-file-alt",
+            "color": "#f15a24",
+            "steps": [
+                {
+                    "name": "jinja",
+                    "options": {
+                        "content-type": "text/html",
+                        "extension": "html",
+                        "template": "scilifelab_minimal.html.j2"
+                    }
+                },
+                {
+                    "name": "pandoc",
+                    "options": {
+                        "to": "latex",
+                        "from": "html"
+                    }
+                }
+            ]
+        },
+        {
+            "uuid": "53d9eda8-3b1e-45be-afbe-4876b57c13a9",
+            "name": "MS Word Document",
+            "shortName": "docx",
+            "icon": "far fa-file-word",
+            "color": "#f15a24",
+            "steps": [
+                {
+                    "name": "jinja",
+                    "options": {
+                        "content-type": "text/html",
+                        "extension": "html",
+                        "template": "scilifelab_minimal.html.j2"
+                    }
+                },
+                {
+                    "name": "pandoc",
+                    "options": {
+                        "to": "docx",
+                        "from": "html"
+                    }
+                }
+            ]
+        },
+        {
+            "uuid": "a10cc916-8673-4654-9584-2ccc169cf9ab",
+            "name": "OpenDocument Text",
+            "shortName": "odt",
+            "icon": "far fa-file-alt",
+            "color": "#f15a24",
+            "steps": [
+                {
+                    "name": "jinja",
+                    "options": {
+                        "content-type": "text/html",
+                        "extension": "html",
+                        "template": "scilifelab_minimal.html.j2"
+                    }
+                },
+                {
+                    "name": "pandoc",
+                    "options": {
+                        "to": "odt",
+                        "from": "html"
+                    }
+                }
+            ]
+        },
+        {
+            "uuid": "e7f7d076-e6c1-4434-9057-267498d5ee45",
+            "name": "Markdown Document",
+            "shortName": "md",
+            "icon": "far fa-file-alt",
+            "color": "#f15a24",
+            "steps": [
+                {
+                    "name": "jinja",
+                    "options": {
+                        "content-type": "text/html",
+                        "extension": "html",
+                        "template": "scilifelab_minimal.html.j2"
+                    }
+                },
+                {
+                    "name": "pandoc",
+                    "options": {
+                        "to": "markdown",
+                        "from": "html"
+                    }
+                }
+            ]
+        }
+    ],
+    "_tdk": {
+        "version": "2.12.0",
+        "readmeFile": "README.md",
+        "files": [
+            "scilifelab.css",
+            "scilifelab_minimal.html.j2"
+        ]
+    },
+    "createdAt": "2020-01-01T08:00:00Z",
+    "updatedAt": "2021-04-06T09:20:11Z"
+}

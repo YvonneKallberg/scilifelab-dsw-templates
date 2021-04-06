@@ -1,0 +1,96 @@
+<div id="q-docs-metadata" class="question">
+  <h3>3. How will the material be documented and described?</h3>
+
+  <div class="answer">
+    {# Good provenance (lab notebooks) #}
+    {%- set provenancePath = [uuids.documentationCUuid, uuids.provenanceQUuid]|reply_path -%}
+    {%- set provenanceAUuid = repliesMap[provenancePath]|reply_str_value -%}
+    {%- if provenanceAUuid == uuids.provenanceLabNotebooksAUuid -%}
+      <p>We will use lab notebooks to make sure that there is good provenance of the data analysis.</p>
+    {%- elif provenanceAUuid == uuids.provenanceELabNotebookAUuid -%}
+      <p>We will use an electronic lab notebook to make sure that there is good provenance of the data analysis.</p>
+    {%- elif provenanceAUuid == uuids.provenanceOtherAUuid -%}
+      {%- set provenanceOtherPath = [provenancePath, uuids.provenanceOtherAUuid, uuids.provenanceOtherQUuid]|reply_path -%}
+    {#  {%- set provenanceOtherReply = repliesMap[provenanceOtherPath] -%}
+      {%- set provenanceOther = provenanceOtherReply.value if provenanceOtherReply else "" -%} #}
+      {%- set provenanceOther = repliesMap[provenanceOtherPath]|reply_str_value -%}
+      <p>We will use other solution than (electronic) lab notebooks to make sure that there is good provenance of the data analysis{{ ": " ~ provenanceOther|dot if provenanceOther else "." }}
+    {%- endif -%}
+
+    {# Documentation with metadata #}
+    {# Metadata standards #}
+    {%- set metadataStandardPath = [uuids.documentationCUuid, uuids.metadataStandardQUuid]|reply_path -%}
+    {%- set metadataStandardAUuid = repliesMap[metadataStandardPath]|reply_str_value -%}
+    {%- if metadataStandardAUuid == uuids.metadataStandardYesAUuid -%}
+      {%- set metadataStandardWhichPath = [metadataStandardPath, uuids.metadataStandardYesAUuid, uuids.metadataStandardYesWhichQUuid]|reply_path -%}
+      {%- set metadataStandardWhichCount = repliesMap[metadataStandardWhichPath]|reply_items -%}
+      {%- if metadataStandardWhichCount|length > 0 -%}
+        <p>We will use the following metadata standards to describe our datasets:</p>
+        <ul>
+        {%- for i in metadataStandardWhichCount -%}
+          <li>
+          {%- set pathPrefix = [metadataStandardWhichPath, i]|reply_path -%}
+          {%- set metadataStandardNamePath = [pathPrefix, uuids.metadataStandardYesWhichAUuid]|reply_path -%}
+          {%- set metadataStandardNameReply = repliesMap[metadataStandardNamePath] -%}
+          {%- if metadataStandardNameReply -%}
+            {{ macros.integrationValue(metadataStandardNameReply, uuids.metadataStandardYesWhichAUuid) }}.
+          {%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+      {%- endif -%}
+    {%- endif -%}
+
+    {# Non-Metadata standards #}
+    {%- set nMetadataStandardPath = [uuids.documentationCUuid, uuids.nonMetadataStandardQUuid]|reply_path -%}
+    {%- set nMetadataStandardAUuid = repliesMap[nMetadataStandardPath]|reply_str_value -%}
+    {%- if nMetadataStandardAUuid == uuids.nonMetadataStandardYesAUuid -%}
+      {%- set nMetadataStandardWhichPath = [nMetadataStandardPath, uuids.nonMetadataStandardYesAUuid, uuids.nonMetadataStandardYesWhichQUuid]|reply_path -%}
+      {%- set nMetadataStandardWhichAUuid = repliesMap[nMetadataStandardWhichPath]|reply_str_value -%}
+      {%- if nMetadataStandardWhichAUuid -%}
+        <p> In addition, the following metadata will be provided as documentation: {{ nMetadataStandardWhichAUuid }} </p>
+      {%- endif -%}
+    {%- endif -%}
+
+    {# Storage and file conventions #}
+    {%- set storageOrganizePath = [uuids.storageCUuid, uuids.storageOrganizeQUuid]|reply_path -%}
+    {%- set storageOrganizeAUuid = repliesMap[storageOrganizePath]|reply_str_value -%}
+    {%- if storageOrganizeAUuid -%}
+      <h4>Storage and file conventions</h4>
+      <p>
+        {%- if storageOrganizeAUuid == uuids.storOrgSubjFoldersAUuid -%}
+          {%- set storOrgSubjFoldersPath = [storageOrganizePath, uuids.storOrgSubjFoldersAUuid]|reply_path -%}
+          {%- set storOrgSubjFoldersConvs = repliesMap[[storOrgSubjFoldersPath, uuids.storOrgSubjFoldersConvsQUuid]|reply_path]|reply_str_value -%}
+            There will be a <strong>folder for each sample/subject</strong>.
+            {% if storOrgSubjFoldersConvs %}
+              Each of those will use the following naming conventions: {{ storOrgSubjFoldersConvs|dot }}
+            {%- endif -%}
+        {%- elif storageOrganizeAUuid == uuids.storOrgAnalysisFoldersAUuid -%}
+          {%- set storOrgAnalysisFoldersPath = [storageOrganizePath, uuids.storOrgAnalysisFoldersAUuid]|reply_path -%}
+          {%- set storOrgAnalysisFoldersConvs = repliesMap[[storOrgAnalysisFoldersPath, uuids.storOrgAnalysisFoldersConvsQUuid]|reply_path]|reply_str_value -%}
+            There will be a <strong>folder for each sample/subject</strong>.
+            {% if storOrgAnalysisFoldersConvs %}
+              Each of those will use the following naming conventions: {{ storOrgAnalysisFoldersConvs|dot }}
+            {%- endif -%}
+        {%- elif storageOrganizeAUuid == uuids.storOrgWorkflowStepFoldersAUuid -%}
+          {%- set storOrgWorkflowStepFoldersPath = [storageOrganizePath, uuids.storOrgWorkflowStepFoldersAUuid]|reply_path -%}
+          {%- set storOrgWorkflowStepFoldersConvs = repliesMap[[storOrgWorkflowStepFoldersPath, uuids.storOrgWorkflowStepFoldersConvsQUuid]|reply_path]|reply_str_value -%}
+            There will be a <strong>folder for each sample/subject</strong>.
+            {% if storOrgWorkflowStepFoldersConvs %}
+              Each of those will use the following naming conventions: {{ storOrgWorkflowStepFoldersConvs|dot }}
+            {%- endif -%}
+        {%- endif -%}
+      </p>
+      {# File naming conventions #}
+      {#   {%- set storageOrganizePath = [uuids.storageCUuid, uuids.storageOrganizeQUuid]|reply_path -%}
+        {%- set storageOrganizeAUuid = repliesMap[storageOrganizePath]|reply_str_value -%} #}
+      {%- set storOrgFileConvsPath = [uuids.storageCUuid, uuids.storOrgFilesConvsQUuid]|reply_path -%}
+      {%- set storOrgFileConvs = repliesMap[storOrgFileConvsPath]|reply_str_value -%}
+      {%- if storOrgFileConvs %}
+      <p>
+        We have made the following decisions about naming the files: {{ storOrgFileConvs }}
+      </p>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+</div>

@@ -1,0 +1,119 @@
+<div id="q-what-data" class="question">
+  <h3>What data will be collected, created or reused?</h3>
+  <div class="answer">
+
+  {%- set measuredDataPath = [uuids.creatingCUuid, uuids.measuredDataQUuid]|reply_path -%}
+  {%- set measuredDataCount = repliesMap[measuredDataPath]|reply_items -%}
+  {# Measured datasets #}
+  {%- if measuredDataCount|length > 0 -%}
+    <div>
+    The following instrument datasets will be acquired in the project:
+    <ul>
+      {%- for datasetIndex in measuredDataCount -%}
+        {%- set pathPrefix = [measuredDataPath, datasetIndex]|reply_path -%}
+        <li>
+          {%- set measuredDataNamePath = [pathPrefix, uuids.measuredDataNameQUuid]|reply_path -%}
+          {%- set measuredDataName = repliesMap[measuredDataNamePath] -%}
+          {{ measuredDataName.value.value if (measuredDataName and measuredDataName.value) else "(no name given)" }}
+        </li>
+      {%- endfor -%}
+    </ul>
+    </div>
+  {%- endif -%}
+  {# Non-equipment datasets #}
+  {%- set neqDataPath = [uuids.creatingCUuid, uuids.neqDataQUuid]|reply_path -%}
+  {%- set neqDataAUuid = repliesMap[neqDataPath]|reply_str_value -%}
+  {%- if neqDataAUuid == uuids.neqDataYesAUuid -%}
+    {%- set neqDataPrefix = [neqDataPath, uuids.neqDataYesAUuid]|reply_path -%}
+    {%- set neqDataQuestPath = [neqDataPrefix, uuids.neqDataQuestQUuid]|reply_path -%}
+    {%- set neqDataQuestAUuid = repliesMap[neqDataQuestPath]|reply_str_value -%}
+    {%- set neqDataCaseReportPath = [neqDataPrefix, uuids.neqDataCaseReportQUuid]|reply_path -%}
+    {%- set neqDataCaseReportAUuid = repliesMap[neqDataCaseReportPath]|reply_str_value -%}
+    {%- set neqDataERecordsPath = [neqDataPrefix, uuids.neqDataERecordsQUuid]|reply_path -%}
+    {%- set neqDataERecordsAUuid = repliesMap[neqDataERecordsPath]|reply_str_value -%}
+    {%- set neqDataSetsPath = [neqDataPrefix, uuids.neqDataSetsQUuid]|reply_path -%}
+    {%- set neqDataSetsCount = repliesMap[neqDataSetsPath]|reply_items -%}
+
+    {%- set questionnaires = neqDataQuestAUuid == uuids.neqDataQuestYesAUuid -%}
+    {%- set caseReport = neqDataCaseReportAUuid == uuids.neqDataCaseReportYesAUuid -%}
+    {%- set eRecords = neqDataERecordsAUuid == uuids.neqDataERecordsYesAUuid -%}
+    {%- if questionnaires or caseReport or eRecords or neqDataSetsCount|length > 0 -%}
+      <div>
+      {# Types #}
+      {%- set typesNames = [] -%}
+      {%- if questionnaires -%}{%- do typesNames.append("questionnaires") -%}{%- endif -%}
+      {%- if caseReport -%}{%- do typesNames.append("case report forms") -%}{%- endif -%}
+      {%- if eRecords -%}{%- do typesNames.append("electronic patient records") -%}{%- endif -%}
+      {%- set typesCount = typesNames|length -%}
+      <p>
+        {%- if typesCount > 0 -%}
+          We also collect data from
+          {% if typesCount == 1 -%}
+              {{ typesNames[0] }}:
+          {%- elif typesCount == 2 -%}
+              {{ typesNames[0] }} and {{ typesNames[1] }}:
+          {%- else -%}
+              {{ typesNames[0] }}, {{ typesNames[1] }}, and {{ typesNames[2] }}:
+          {%- endif -%}
+        {% endif %}
+        {# Datasets #}
+        {%- if neqDataSetsCount|length > 0 -%}
+          <ul>
+          {%- for neqDataSetIndex in neqDataSetsCount -%}
+            {%- set pathPrefix = [neqDataSetsPath, neqDataSetIndex]|reply_path -%}
+            {%- set neqDataSetsName = repliesMap[[pathPrefix, uuids.neqDataSetsNameQUuid]|reply_path]|reply_str_value -%}
+            {%- set neqDataSetsDesc = repliesMap[[pathPrefix, uuids.neqDataSetsDescQUuid]|reply_path]|reply_str_value -%}
+            <li>
+              {{ neqDataSetsName if neqDataSetsName else "(no name given)" }}
+              {% if neqDataSetsDesc -%}<span class="separator">&ndash;</span> {{ neqDataSetsDesc }}{%- endif -%}
+            </li>
+          {%- endfor -%}
+          </ul>
+        {%- endif -%}
+      </p>
+      </div>
+    {%- endif -%}
+  {%- endif -%}
+  {# Existing datasets #}
+  {%- set usingPreexistingPath = [uuids.reusingCUuid, uuids.usingPreexistingQUuid]|reply_path -%}
+  {%- set usingPreexistingAUuid = repliesMap[usingPreexistingPath]|reply_str_value -%}
+  {%- if usingPreexistingAUuid == uuids.usingPreexistingYesAUuid -%}
+    {%- set refDataPath = [usingPreexistingPath, uuids.usingPreexistingYesAUuid, uuids.refDataQUuid]|reply_path -%}
+    {%- set refDataCount = repliesMap[refDataPath]|reply_items -%}
+    {%- set nrefDataPath = [usingPreexistingPath, uuids.usingPreexistingYesAUuid, uuids.nrefDataQUuid]|reply_path -%}
+    {%- set nrefDataCount = repliesMap[nrefDataPath]|reply_items -%}
+    {%- if (refDataCount|length + nrefDataCount|length) > 0 -%}
+      <div>
+        {%- if refDataCount|length > 0 -%}
+          <div>We will use the following reference datasets:
+          <ul>
+            {%- for refDataIndex in refDataCount -%}
+              {%- set refDataPrefix = [refDataPath, refDataIndex]|reply_path -%}
+              {%- set refDataNameReply = repliesMap[[refDataPrefix, uuids.refDataNameQUuid]|reply_path] -%}
+              <li>
+                {# identification #}
+                {{ macros.integrationValue(refDataNameReply, uuids.refDataNameQUuid) }}
+              </li>
+            {%- endfor -%}
+          </ul>
+          </div>
+        {%- endif -%}
+        {%- if nrefDataCount|length > 0 -%}
+          <div>We will use the following already existing non-reference datasets:
+          <ul>
+            {%- for nrefDataIndex in nrefDataCount -%}
+              {%- set nrefDataNamePath = [nrefDataPath, nrefDataIndex, uuids.nrefDataNameQUuid]|reply_path -%}
+              {%- set nrefDataNameReply = repliesMap[nrefDataNamePath] -%}
+              <li>
+                {# identification #}
+                {{ macros.integrationValue(nrefDataNameReply, uuids.nrefDataNameQUuid) }}
+              </li>
+            {%- endfor -%}
+          </ul>
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  {%- endif -%}
+  </div>
+</div>

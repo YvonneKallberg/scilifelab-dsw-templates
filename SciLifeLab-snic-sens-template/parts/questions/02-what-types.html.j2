@@ -1,0 +1,24 @@
+<div id="q-how-data" class="question">
+  <div>
+  {# Format/Type #}
+  {%- set formatsPath = [uuids.creatingCUuid, uuids.formatsQUuid]|reply_path -%}
+  {%- set formatsCount = repliesMap[formatsPath]|reply_items -%}
+  {%- if formatsCount|length > 0 -%}
+    <div>
+      We will be using the following data formats and types:
+    <ul>
+      {%- for formatIndex in formatsCount -%}
+        {%- set formatPrefix = [formatsPath, formatIndex]|reply_path -%}
+        {%- set formatNameReply = repliesMap[[formatPrefix, uuids.formatsNameQUuid]|reply_path] -%}
+        {%- set formatsVolumePath = [formatPrefix, uuids.formatsVolumeQUuid]|reply_path -%}
+        {%- set formatsVolumeAUuid = repliesMap[formatsVolumePath]|reply_str_value -%}
+        <li>
+          {# identification #}
+          {{ macros.integrationValue(formatNameReply, uuids.formatsNameQUuid) }}
+        </li>
+      {%- endfor -%}
+    </ul>
+    </div>
+  {%- endif -%}
+  </div>
+</div>

@@ -1,0 +1,154 @@
+<div id="q-longterm-plan" class="question">
+  <h3>11. Will specific systems, software, source code or other types of services be necessary in order to understand, partake of or use/analyse data in the long term?</h3>
+{# I have no idea what to put here, there is no questions about this? #}
+  <div class="answer">
+    {# Produced datasets #}
+    {%- set producedDataPath = [uuids.preservingCUuid, uuids.producedDataQUuid]|reply_path -%}
+    {%- set producedDataCount = repliesMap[producedDataPath]|reply_items -%}
+    {%- if producedDataCount|length > 0 -%}
+      <ul>
+      {%- for i in producedDataCount -%}
+        {%- set pathPrefix = [producedDataPath, i]|reply_path -%}
+        {%- set producedDataName = repliesMap[[pathPrefix, uuids.producedDataNameQUuid]|reply_path]|reply_str_value -%}
+        <li>
+          <strong>{{ producedDataName if producedDataName else "(no name given)" }}</strong>
+          {# If will be published #}
+          {%- set isPublishedDataPath = [pathPrefix, uuids.isPublishedDataQUuid]|reply_path -%}
+          {%- set isPublishedDataAUuid = repliesMap[isPublishedDataPath]|reply_str_value -%}
+          {% if isPublishedDataAUuid == uuids.isPublishedDataNoAUuid %}
+            (not published)
+          {% elif isPublishedDataAUuid == uuids.isPublishedDataYesAUuid %}
+            (published)
+            {# Distributions #}
+            {% set distrosPath = [isPublishedDataPath, uuids.isPublishedDataYesAUuid, uuids.publishedDistrosQUuid]|reply_path -%}
+            {%- set distrosCount = repliesMap[distrosPath]|reply_items -%}
+            {%- if distrosCount|length > 0 -%}
+              <br>The distributions will be stored in:
+              <ul>
+              {%- for j in distrosCount -%}
+                {%- set distroPrefix = [distrosPath, j]|reply_path -%}
+                {%- set distroRepositoryKindPath = [distroPrefix, uuids.publishedDataRepositoryKindQUuid]|reply_path -%}
+                {%- set distroRepositoryKindAUuid = repliesMap[distroRepositoryKindPath]|reply_str_value -%}
+                {%- if distroRepositoryKindAUuid -%}
+                  <li>
+                    {%- if distroRepositoryKindAUuid == uuids.publishedDataRepositoryDomainSpecificAUuid %}
+                      Domain-specific repository
+                      {%- set domainSpecificRepoNamePath = [distroRepositoryKindPath, uuids.publishedDataRepositoryDomainSpecificAUuid, uuids.domainSpecificRepoNameQUuid]|reply_path -%}
+                      {%- set domainSpecificRepoNameReply = repliesMap[domainSpecificRepoNamePath] -%}
+                      {%- if domainSpecificRepoNameReply -%}
+                        : {{ macros.integrationValue(domainSpecificRepoNameReply, uuids.domainSpecificRepoNameQUuid) }}.
+                      {%- else -%}.
+                      {% endif -%}
+                      {# Contact the repository #}
+                      {%- set domainSpecificRepoContactBeforePath = [distroRepositoryKindPath, uuids.publishedDataRepositoryDomainSpecificAUuid, uuids.domainSpecificRepoContactBeforeQUuid]|reply_path -%}
+                      {%- set domainSpecificRepoContactBeforeAUuid = repliesMap[domainSpecificRepoContactBeforePath]|reply_str_value -%}
+                      {%- if domainSpecificRepoContactBeforeAUuid == uuids.domainSpecificRepoContactBeforeNoAUuid %}
+                        We don't need to contact the repository because it is a routine for us.
+                      {%- elif domainSpecificRepoContactBeforeAUuid == uuids.domainSpecificRepoContactBeforeYesAlreadyAUuid %}
+                        We have already contacted the repository.
+                      {%- elif domainSpecificRepoContactBeforeAUuid == uuids.domainSpecificRepoContactBeforeYesWillAUuid %}
+                        We are going to contact the repository.
+                      {%- elif domainSpecificRepoContactBeforeAUuid == uuids.domainSpecificRepoContactBeforeOtherAUuid %}
+                        {%- set domainSpecificRepoContactBeforeOtherPath = [domainSpecificRepoContactBeforePath, uuids.domainSpecificRepoContactBeforeOtherAUuid, uuids.domainSpecificRepoContactBeforeOtherQUuid]|reply_path -%}
+                        {%- set domainSpecificRepoContactBeforeOther = repliesMap[domainSpecificRepoContactBeforeOtherPath]|reply_str_value %}
+                        We have made other arrangements{{ ": " ~ domainSpecificRepoContactBeforeOther|dot if domainSpecificRepoContactBeforeOther else "." }}
+                      {%- endif -%}
+                    {%- elif distroRepositoryKindAUuid == uuids.publishedDataRepositoryNationalAUuid %}
+                      Our national repository.
+                    {%- elif distroRepositoryKindAUuid == uuids.publishedDataRepositoryInstitutionalAUuid %}
+                      Our institutional repository.
+                    {%- elif distroRepositoryKindAUuid == uuids.publishedDataRepositorySpecialAUuid %}
+                      Special-purpose repository for the project.
+                      {# Long-term support #}
+                      {%- set specialRepoLongTermSupportPath = [distroRepositoryKindPath, uuids.publishedDataRepositorySpecialAUuid, uuids.specialRepoLongTermSupportQUuid]|reply_path -%}
+                      {%- set specialRepoLongTermSupportAUuid = repliesMap[specialRepoLongTermSupportPath]|reply_str_value -%}
+                      {%- if specialRepoLongTermSupportAUuid == uuids.specialRepoLongTermSupportYesAUuid %}
+                        We will be able to support this repository for a sufficiently long time.
+                      {%- endif -%}
+                      {# Service level #}
+                      {%- set specialRepoServiceLevelPath = [distroRepositoryKindPath, uuids.publishedDataRepositorySpecialAUuid, uuids.specialRepoServiceLevelQUuid]|reply_path -%}
+                      {%- set specialRepoServiceLevelAUuid = repliesMap[specialRepoServiceLevelPath]|reply_str_value -%}
+                      {%- if specialRepoServiceLevelAUuid == uuids.specialRepoServiceLevelDownloadAUuid %}
+                        The repository will provide download-only service.
+                      {%- elif specialRepoServiceLevelAUuid == uuids.specialRepoServiceLevelSimpleAUuid %}
+                        The repository will provice a search and simple access interface.
+                      {%- elif specialRepoServiceLevelAUuid == uuids.specialRepoServiceLevelAdvancedAUuid %}
+                        The repository will provide an advanced processing service.
+                      {%- endif -%}
+                    {%- endif -%}
+
+                    {# File format #}
+                    {%- set publishedRepoFormatPath = [pathPrefix, uuids.repoFileFormatQUuid]|reply_path -%}
+                    {%- set publishedRepoFormatCount = repliesMap[publishedRepoFormatPath]|reply_items -%}
+                    {%- if publishedRepoFormatCount|length > 0 -%}
+                      {{ " File formats will be: " if (publishedRepoFormatCount|length>1) else " File format will be: " }}
+                      <ul>
+                      {%- for nFormats in publishedRepoFormatCount -%}
+                        {%- set formatPathPrefix = [publishedRepoFormatPath, nFormats,uuids.repoFileFormatAUuid]|reply_path -%}
+                        {%- set formatNameReply = repliesMap[formatPathPrefix] -%}
+                        {%- set formatsIsStandardPath = [publishedRepoFormatPath, nFormats, uuids.formatsIsStandardQUuid]|reply_path -%}
+                        {%- set formatsIsStandardAUuid = repliesMap[formatsIsStandardPath]|reply_str_value -%}
+                        {%- set formatsIsLTSuitablePath = [publishedRepoFormatPath, nFormats, uuids.formatsIsLTSuitableQUuid]|reply_path -%}
+                        {%- set formatsIsLTSuitableAUuid = repliesMap[formatsIsLTSuitablePath]|reply_str_value -%}
+                        {%- if formatNameReply %}
+                          <li>
+                            {{ macros.integrationValue(formatNameReply, uuids.repoFileFormatAUuid) }}
+                            {%- if formatsIsStandardAUuid or formatsIsLTSuitableAUuid -%}
+                              <p>
+                              {# standard? #}
+                              {%- if formatsIsStandardAUuid == uuids.formatsIsStandardYesAUuid %}
+                                It is a standardized format.
+                              {%- elif formatsIsStandardAUuid == uuids.formatsIsStandardNoAUuid -%}
+                                {%- set formatsWhyNonStandardPath = [formatsIsStandardPath, uuids.formatsIsStandardNoAUuid, uuids.formatsWhyNonStandardQUuid]|reply_path -%}
+                                {%- set formatsWhyNonStandardAUuid = repliesMap[formatsWhyNonStandardPath]|reply_str_value -%}
+                                {%- if formatsWhyNonStandardAUuid == uuids.formatsWhyNSThereIsNoStandardAUuid %}
+                                  It is not a standardized format because there is no standardized format for this data type.
+                                {%- elif formatsWhyNonStandardAUuid == uuids.formatsWhyNSItIsOptimizedAUuid %}
+                                  It is not a standardized format but it is optimized for processing speed and/or volume.
+                                {%- elif formatsWhyNonStandardAUuid == uuids.formatsWhyNSAnotherReasonAUuid -%}
+                                  {%- set formatsWhyNSAnotherReasonPath = [formatsWhyNonStandardPath, uuids.formatsWhyNSAnotherReasonAUuid, uuids.formatsWhyNSAnotherReasonQUuid]|reply_path -%}
+                                  {%- set formatsWhyNSAnotherReason = repliesMap[formatsWhyNSAnotherReasonPath]|reply_str_value -%}
+                                    It is not a standardized format.
+                                  {%- if formatsWhyNSAnotherReason %}
+                                    {{ formatsWhyNSAnotherReason|capitalize|dot }}
+                                  {%- endif -%}
+                                {%- endif -%}
+                              {%- endif -%}
+                              {# long-term suitable? #}
+                              {%- if formatsIsLTSuitableAUuid == uuids.formatsIsLTSuitableYesAUuid %}
+                                This is a suitable format for long-term archiving.
+                              {%- elif formatsIsLTSuitableAUuid == uuids.formatsIsLTSuitableNoAUuid -%}
+                                {%- set formatsConvertLTSuitablePath = [formatsIsLTSuitablePath, uuids.formatsIsLTSuitableNoAUuid, uuids.formatsConvertLTSuitableQUuid]|reply_path -%}
+                                {%- set formatsConvertLTSuitableAUuid = repliesMap[formatsConvertLTSuitablePath]|reply_str_value -%}
+                                {%- if formatsConvertLTSuitableAUuid == uuids.formatsConvertLTSuitableYesAUuid %}
+                                  This is not a suitable format for long-term archiving; however, we plan to convert it to a suitable format before the end of the project.
+                                {%- elif formatsConvertLTSuitableAUuid == uuids.formatsConvertLTSuitableNoAUuid %}
+                                  We are aware that this is not a suitable format for long-term archiving.
+                                {%- endif -%}
+                              {%- endif -%}
+                              </p>
+                            {%- endif -%}
+                          </li>
+                        {%- endif -%}
+                      {%- endfor -%}
+                    </ul>
+                    {%- endif -%}
+                  </li>
+                {%- endif -%}
+              {%- endfor -%}
+              </ul>
+            {%- endif -%}
+            {# Catalogue #}
+            {%- set publishedDataCataloguePath = [isPublishedDataPath, uuids.isPublishedDataYesAUuid, uuids.publishedDataCatalogueQUuid]|reply_path -%}
+            {%- set publishedDataCatalogueAUuid = repliesMap[publishedDataCataloguePath]|reply_str_value -%}
+            {%- if publishedDataCatalogueAUuid == uuids.publishedDataCatalogueYesAUuid -%}
+              <br>We will be adding a reference to the published data to at least one data catalogue.
+            {%- endif -%}
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+  </div>
+</div>

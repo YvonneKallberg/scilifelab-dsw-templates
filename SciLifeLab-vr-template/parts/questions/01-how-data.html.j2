@@ -1,0 +1,254 @@
+<div id="q-what-data" class="question">
+  <h3>1. How will data be collected, created or reused?</h3>
+  <div class="answer">
+
+  {%- set measuredDataPath = [uuids.creatingCUuid, uuids.measuredDataQUuid]|reply_path -%}
+  {%- set measuredDataCount = repliesMap[measuredDataPath]|reply_items -%}
+  {# Measured datasets #}
+  {%- if measuredDataCount|length > 0 -%}
+    <div>
+    <h4>Instrument datasets</h4>
+    The following instrument datasets will be acquired in the project:
+    <ul>
+      {%- for datasetIndex in measuredDataCount -%}
+        {%- set pathPrefix = [measuredDataPath, datasetIndex]|reply_path -%}
+        <li>
+          {%- set measuredDataNamePath = [pathPrefix, uuids.measuredDataNameQUuid]|reply_path -%}
+          {%- set measuredDataName = repliesMap[measuredDataNamePath] -%}
+          {%- set measuredDataWhoPath = [pathPrefix, uuids.measuredDataWhoQUuid]|reply_path -%}
+          {%- set measuredDataWhoAUuid = repliesMap[measuredDataWhoPath]|reply_str_value -%}
+          {%- set measuredDataEquipPath = [pathPrefix, uuids.measuredDataEquipQUuid]|reply_path -%}
+          {%- set measuredDataEquipAUuid = repliesMap[measuredDataEquipPath]|reply_str_value -%}
+          <strong>{{ measuredDataName.value.value if (measuredDataName and measuredDataName.value) else "(no name given)" }}</strong>
+          {# Who will collect #}
+          {%- if measuredDataWhoAUuid == uuids.measuredDataWhoExpertsOwnAUuid -%}
+            <p>This dataset will be collected by experts in the project, with our own equipment.</p>
+          {%- elif measuredDataWhoAUuid == uuids.measuredDataWhoExpertsOutAUuid -%}
+            {%- set measuredDataWhoInfraPath = [measuredDataWhoPath, uuids.measuredDataWhoExpertsOutAUuid, uuids.measuredDataWhoExpertsOutQUuid]|reply_path -%}
+            {%- set measuredDataWhoInfraWhichAUuid = repliesMap[measuredDataWhoInfraPath]|reply_str_value -%}
+            {%- if measuredDataWhoInfraWhichAUuid == uuids.measuredDataWhoExpertsOutNGIAUuid -%}
+              <p>This dataset will be collected by National Genomics Infrastructure (NGI).</p>
+            {%- elif measuredDataWhoInfraWhichAUuid == uuids.measuredDataWhoExpertsOutESCGAUuid -%}
+              <p>This dataset will be collected by Eukaryotic Single-Cell Genomics (ESCG).</p>
+            {%- elif measuredDataWhoInfraWhichAUuid == uuids.measuredDataWhoExpertsOutMSCGAUuid -%}
+              <p>This dataset will be collected by Microbial Single Cell Genomics.</p>
+            {%- elif measuredDataWhoInfraWhichAUuid == uuids.measuredDataWhoExpertsOutSMCAUuid -%}
+              <p>This dataset will be collected by Swedish Metabolomics Centre (SMC).</p>
+            {%- elif measuredDataWhoInfraWhichAUuid == uuids.measuredDataWhoExpertsOutNMRAUuid -%}
+              <p>This dataset will be collected by Swedish NMR Centre.</p>
+            {%- elif measuredDataWhoInfraWhichAUuid == uuids.measuredDataWhoExpertsOutBioMSAUuid -%}
+              <p>This dataset will be collected by Swedish National Infrastructure for Biological Mass Spectrometry (BioMS).</p>
+            {%- elif measuredDataWhoInfraWhichAUuid == uuids.measuredDataWhoExpertsOutChemAUuid -%}
+              <p>This dataset will be collected by Chemical proteomics & proteogenomics national facility.</p>
+            {%- elif measuredDataWhoInfraWhichAUuid == uuids.measuredDataWhoExpertsOutOtherAUuid -%}
+              {%- set measuredDataWhoInfraOtherPath = [measuredDataWhoInfraPath, uuids.measuredDataWhoExpertsOutOtherAUuid, uuids.measuredDataWhoExpertsOutOtherQUuid]|reply_path -%}
+              {%- set measuredDataWhoInfraOtherAUuid = repliesMap[measuredDataWhoInfraOtherPath]|reply_str_value -%}
+              {%- if measuredDataWhoInfraOtherAUuid -%}
+                <p>This dataset will be collected by: {{ measuredDataWhoInfraOtherAUuid }}.</p>
+              {%- else -%}
+                <p>This dataset will be collected at a specialized infrastructure.</p>
+              {%- endif -%}
+            {%- endif -%}
+          {%- elif measuredDataWhoAUuid == uuids.measuredDataWhoExternalAUuid -%}
+            {%- set mdExternalOwnershipPath = [measuredDataWhoPath, uuids.measuredDataWhoExternalAUuid, uuids.mdExternalOwnershipQUuid]|reply_path -%}
+            {%- set mdExternalOwnershipAUuid = repliesMap[mdExternalOwnershipPath]|reply_str_value -%}
+            <p>
+              This dataset will be collected by an external party.
+              {% if mdExternalOwnershipAUuid == uuids.mdExternalOwnershipPartyAUuid -%}
+                The ownership of the resulting data will remain with the external party.
+              {%- elif mdExternalOwnershipAUuid == uuids.mdExternalOwnershipPartnersAUuid -%}
+                The project partners acquire full ownership of the data.
+              {%- elif mdExternalOwnershipAUuid == uuids.mdExternalOwnershipOtherAUuid -%}
+                {%- set mdExternalOwnershipOtherPath = [mdExternalOwnershipPath, uuids.mdExternalOwnershipOtherAUuid, uuids.mdExternalOwnershipOtherQUuid]|reply_path -%}
+                {%- set mdExternalOwnershipOther = repliesMap[mdExternalOwnershipOtherPath]|reply_str_value -%}
+                {%- if mdExternalOwnershipOther -%}
+                  For the ownership of the data we have made the following arrangements: {{ mdExternalOwnershipOther|dot }}
+                {%- endif -%}
+              {%- endif -%}
+            </p>
+          {%- endif -%}
+          {# Instruments #}
+          {%- set measuredDataInstrPath = [pathPrefix, uuids.measuredDataInstrQUuid]|reply_path -%}
+          {%- set measuredDataInstrCount = repliesMap[measuredDataInstrPath]|reply_items -%}
+          {%- if measuredDataInstrCount|length > 0 -%}
+            <p>For this dataset, we are using the following instruments:
+            <ul>
+              {%- for instrIndex in measuredDataInstrCount -%}
+                {%- set instrPathPrefix = [measuredDataInstrPath, instrIndex]|reply_path -%}
+                <li>
+                  {%- set measuredDataInstrNameReply = repliesMap[[instrPathPrefix, uuids.measuredDataInstrNameQUuid]|reply_path] -%}
+                  {%- set measuredDataInstrDescPath = [instrPathPrefix, uuids.measuredDataInstrDescQUuid]|reply_path -%}
+                  {%- set measuredDataInstrDesc = repliesMap[measuredDataInstrDescPath]|reply_str_value -%}
+                  <strong>{{ macros.integrationValue(measuredDataInstrNameReply, uuids.measuredDataInstrNameQUuid) }}</strong>
+                  {% if measuredDataInstrDesc -%}<span class="separator">&ndash;</span>{%- endif %}
+                  {{ measuredDataInstrDesc }}
+                </li>
+              {%- endfor -%}
+            </ul>
+            </p>
+          {%- else -%}
+            <p>No instruments for this dataset have been specified.</p>
+          {%- endif -%}
+          {# Equipment standard? #}
+          {% if measuredDataEquipAUuid == uuids.measuredDataEquipDescribedAUuid -%}
+            <p>The equipment is very well described and known.</p>
+          {%- elif measuredDataEquipAUuid == uuids.measuredDataEquipCareAUuid -%}
+            <p>The equipment is less well described or not completely standard, so we will need to take extra care documenting the process.</p>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+    </div>
+  {%- endif -%}
+  {# Non-equipment datasets #}
+  {%- set neqDataPath = [uuids.creatingCUuid, uuids.neqDataQUuid]|reply_path -%}
+  {%- set neqDataAUuid = repliesMap[neqDataPath]|reply_str_value -%}
+  {%- if neqDataAUuid == uuids.neqDataYesAUuid -%}
+    {%- set neqDataPrefix = [neqDataPath, uuids.neqDataYesAUuid]|reply_path -%}
+    {%- set neqDataQuestPath = [neqDataPrefix, uuids.neqDataQuestQUuid]|reply_path -%}
+    {%- set neqDataQuestAUuid = repliesMap[neqDataQuestPath]|reply_str_value -%}
+    {%- set neqDataCaseReportPath = [neqDataPrefix, uuids.neqDataCaseReportQUuid]|reply_path -%}
+    {%- set neqDataCaseReportAUuid = repliesMap[neqDataCaseReportPath]|reply_str_value -%}
+    {%- set neqDataERecordsPath = [neqDataPrefix, uuids.neqDataERecordsQUuid]|reply_path -%}
+    {%- set neqDataERecordsAUuid = repliesMap[neqDataERecordsPath]|reply_str_value -%}
+    {%- set neqDataSetsPath = [neqDataPrefix, uuids.neqDataSetsQUuid]|reply_path -%}
+    {%- set neqDataSetsCount = repliesMap[neqDataSetsPath]|reply_items -%}
+
+    {%- set questionnaires = neqDataQuestAUuid == uuids.neqDataQuestYesAUuid -%}
+    {%- set caseReport = neqDataCaseReportAUuid == uuids.neqDataCaseReportYesAUuid -%}
+    {%- set eRecords = neqDataERecordsAUuid == uuids.neqDataERecordsYesAUuid -%}
+    {%- if questionnaires or caseReport or eRecords or neqDataSetsCount|length > 0 -%}
+      <div>
+      <h4>Non-equipment datasets</h4>
+      {# Types #}
+      {%- set typesNames = [] -%}
+      {%- if questionnaires -%}{%- do typesNames.append("questionnaires") -%}{%- endif -%}
+      {%- if caseReport -%}{%- do typesNames.append("case report forms") -%}{%- endif -%}
+      {%- if eRecords -%}{%- do typesNames.append("electronic patient records") -%}{%- endif -%}
+      {%- set typesCount = typesNames|length -%}
+      <p>
+        {%- if typesCount > 0 -%}
+          We also collect data from
+          {% if typesCount == 1 -%}
+              {{ typesNames[0] }}:
+          {%- elif typesCount == 2 -%}
+              {{ typesNames[0] }} and {{ typesNames[1] }}:
+          {%- else -%}
+              {{ typesNames[0] }}, {{ typesNames[1] }}, and {{ typesNames[2] }}:
+          {%- endif -%}
+        {% endif %}
+        {# Datasets #}
+        {%- if neqDataSetsCount|length > 0 -%}
+          <ul>
+          {%- for neqDataSetIndex in neqDataSetsCount -%}
+            {%- set pathPrefix = [neqDataSetsPath, neqDataSetIndex]|reply_path -%}
+            {%- set neqDataSetsName = repliesMap[[pathPrefix, uuids.neqDataSetsNameQUuid]|reply_path]|reply_str_value -%}
+            {%- set neqDataSetsDesc = repliesMap[[pathPrefix, uuids.neqDataSetsDescQUuid]|reply_path]|reply_str_value -%}
+            <li>
+              <strong>{{ neqDataSetsName if neqDataSetsName else "(no name given)" }}</strong>
+              {% if neqDataSetsDesc -%}<span class="separator">&ndash;</span> {{ neqDataSetsDesc }}{%- endif -%}
+            </li>
+          {%- endfor -%}
+          </ul>
+        {%- endif -%}
+      </p>
+      </div>
+    {%- endif -%}
+  {%- endif -%}
+  {# Existing datasets #}
+  {%- set usingPreexistingPath = [uuids.reusingCUuid, uuids.usingPreexistingQUuid]|reply_path -%}
+  {%- set usingPreexistingAUuid = repliesMap[usingPreexistingPath]|reply_str_value -%}
+  {%- if usingPreexistingAUuid == uuids.usingPreexistingYesAUuid -%}
+    {%- set refDataPath = [usingPreexistingPath, uuids.usingPreexistingYesAUuid, uuids.refDataQUuid]|reply_path -%}
+    {%- set refDataCount = repliesMap[refDataPath]|reply_items -%}
+    {%- set nrefDataPath = [usingPreexistingPath, uuids.usingPreexistingYesAUuid, uuids.nrefDataQUuid]|reply_path -%}
+    {%- set nrefDataCount = repliesMap[nrefDataPath]|reply_items -%}
+    {%- if (refDataCount|length + nrefDataCount|length) > 0 -%}
+      <div>
+        <h4>Re-used datasets</h4>
+        {%- if refDataCount|length > 0 -%}
+          <div>We will use the following reference datasets:
+          <ul>
+            {%- for refDataIndex in refDataCount -%}
+              {%- set refDataPrefix = [refDataPath, refDataIndex]|reply_path -%}
+              {%- set refDataNameReply = repliesMap[[refDataPrefix, uuids.refDataNameQUuid]|reply_path] -%}
+              {%- set refDataWhere = repliesMap[[refDataPrefix, uuids.refDataWhereQUuid]|reply_path]|reply_str_value -%}
+              <li>
+                {# identification #}
+                <strong>{{ macros.integrationValue(refDataNameReply, uuids.refDataNameQUuid) }}</strong>
+                {%- if refDataWhere -%}
+                  {%- if refDataWhere.startswith("http://") or refDataWhere.startswith("https://") or refDataWhere.startswith("ftp://") %}
+                    (<a href="{{ refDataWhere }}" target="_blank">{{ refDataWhere }}</a>)
+                  {%- else %}
+                    ({{ refDataWhere }})
+                  {%- endif -%}
+                {%- endif -%}
+                {# version #}
+                {%- set refDataVersionedPath = [refDataPrefix, uuids.refDataVersionedQUuid]|reply_path -%}
+                {%- set refDataVersionedAUuid = repliesMap[refDataVersionedPath]|reply_str_value -%}
+                {%- if refDataVersionedAUuid == uuids.refDataVersionedYesAUuid -%}
+                  {%- set refDataVersionedWhichPath = [refDataVersionedPath, uuids.refDataVersionedYesAUuid, uuids.refDataVersionedWhichQUuid]|reply_path -%}
+                  {%- set refDataVersionedWhich = repliesMap[refDataVersionedWhichPath]|reply_str_value -%}
+                  {%- set refDataVersionedChangePath = [refDataVersionedPath, uuids.refDataVersionedYesAUuid, uuids.refDataVersionedChangeQUuid]|reply_path -%}
+                  {%- set refDataVersionedChangeAUuid = repliesMap[refDataVersionedChangePath]|reply_str_value -%}
+                  {%- if refDataVersionedWhich or refDataVersionedChangeAUuid  %}
+                    <p>
+                    {% if refDataVersionedWhich -%}
+                      We will use version "{{ refDataVersionedWhich }}" of this dataset.
+                    {%- endif -%}
+                    {%- if refDataVersionedChangeAUuid == uuids.refDataVersionedChangeStayAUuid %}
+                      Even if a new version becomes available during the project, we will stay with the old version.
+                    {%- elif refDataVersionedChangeAUuid == uuids.refDataVersionedChangeNewAUuid %}
+                      If a new version becomes available during the project, new analyses will be done with the new version.
+                    {%- elif refDataVersionedChangeAUuid == uuids.refDataVersionedChangeAllAUuid %}
+                      If a new version becomes available during the project, all analyses will be redone with the new version.
+                    {%- endif -%}
+                    </p>
+                  {%- endif -%}
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ul>
+          </div>
+        {%- endif -%}
+        {%- if nrefDataCount|length > 0 -%}
+          <div>We will use the following already existing non-reference datasets:
+          <ul>
+            {%- for nrefDataIndex in nrefDataCount -%}
+              {%- set nrefDataNamePath = [nrefDataPath, nrefDataIndex, uuids.nrefDataNameQUuid]|reply_path -%}
+              {%- set nrefDataNameReply = repliesMap[nrefDataNamePath] -%}
+              {%- set nrefDataWhere = repliesMap[[nrefDataPath, nrefDataIndex, uuids.nrefDataWhereQUuid]|reply_path]|reply_str_value -%}
+              <li>
+                {# identification #}
+                <strong>{{ macros.integrationValue(nrefDataNameReply, uuids.nrefDataNameQUuid) }}</strong>
+                {%- if nrefDataWhere -%}
+                  {%- if nrefDataWhere.startswith("http://") or nrefDataWhere.startswith("https://") or nrefDataWhere.startswith("ftp://") %}
+                    (<a href="{{ nrefDataWhere }}" target="_blank">{{ nrefDataWhere }}</a>)
+                  {%- else %}
+                    ({{ nrefDataWhere }})
+                  {%- endif -%}
+                {%- endif -%}
+                {# data access #}
+                {%- set nrefDataAccessPath = [nrefDataPath, nrefDataIndex, uuids.nrefDataAccessQUuid]|reply_path -%}
+                {%- set nrefDataAccessAUuid = repliesMap[nrefDataAccessPath]|reply_str_value -%}
+                {%- if nrefDataAccessAUuid %}
+                  <p>
+                  {% if nrefDataAccessAUuid == uuids.nrefDataAccessHaveCopyAUuid -%}
+                    We already have a copy of this dataset.
+                  {%- elif nrefDataAccessAUuid == uuids.nrefDataAccessWillDownloadAUuid -%}
+                    We will download or get a copy.
+                  {%- elif nrefDataAccessAUuid == uuids.nrefDataAccessWillOnlineAUuid -%}
+                    We will use its online version without downloading it.
+                  {%- endif -%}
+                  </p>
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ul>
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  {%- endif -%}
+  </div>
+</div>

@@ -1,0 +1,67 @@
+<div id="q-store-backup" class="question">
+  <h3>How is storage and backup of data and metadata safeguarded?</h3>
+  <div class="answer">
+    {# Data stored by members (no shared workspace) #}
+    {%- set sharedWorkspacePath = [uuids.storageCUuid, uuids.sharedWorkspaceQUuid]|reply_path -%}
+    {%- set sharedWorkspaceAUuid = repliesMap[sharedWorkspacePath]|reply_str_value -%}
+    {%- if sharedWorkspaceAUuid == uuids.sharedWorkspaceNoAUuid -%}
+      {%- set notSharedBackupPath = [sharedWorkspacePath, uuids.sharedWorkspaceNoAUuid, uuids.notSharedBackupQUuid]|reply_path -%}
+      {%- set notSharedBackupAUuid = repliesMap[notSharedBackupPath]|reply_str_value -%}
+      {%- if notSharedBackupAUuid == uuids.notSharedBackupYesAUuid -%}
+        <p>Data that project members themselves store adequately backed up and traceable. Therefore data are protected against both equipment failure and human error.</p>
+      {%- endif -%}
+    {%- elif sharedWorkspaceAUuid == uuids.sharedWorkspaceYesAUuid -%}
+      {%- set sharedWherePath = [sharedWorkspacePath, uuids.sharedWorkspaceYesAUuid, uuids.sharedWhereQUuid]|reply_path -%}
+      {%- set sharedWhereAUuid = repliesMap[sharedWherePath]|reply_str_value -%}
+      {%- if sharedWhereAUuid == uuids.sharedWhereSNICAUuid -%}
+        <p>
+        {%- set sharedWhereSNICPath = [sharedWherePath, uuids.sharedWhereSNICAUuid]|reply_path -%}
+        {%- set sharedWhereSNICWhichPath = [sharedWhereSNICPath, uuids.sharedWhereSNICwhichQUuid]|reply_path -%}
+        {%- set sharedWhereSNICWhichAUuid = repliesMap[sharedWhereSNICWhichPath]|reply_str_value -%}
+        {%- if sharedWhereSNICWhichAUuid == uuids.sharedWhereSNICwhichUppmaxAUuid %}
+          {%- set sharedWhereSNICUppmaxWherePath = [sharedWhereSNICWhichPath, uuids.sharedWhereSNICwhichUppmaxAUuid,uuids.sharedWhereSNICwhichUppmaxWhereQUuid]|reply_path -%}
+          {%- set sharedWhereSNICUppmaxWhereAUuid = repliesMap[sharedWhereSNICUppmaxWherePath]|reply_str_value -%}
+          {%- set sharedWhereSNICUppmaxWhenPath = [sharedWhereSNICWhichPath, uuids.sharedWhereSNICwhichUppmaxAUuid,uuids.sharedWhereSNICwhichUppmaxWhenQUuid]|reply_path -%}
+          {%- set sharedWhereSNICUppmaxWhenAUuid = repliesMap[sharedWhereSNICUppmaxWhenPath]|reply_str_value -%}
+          Data will be stored at SNIC center Uppmax Bianca. After the project is finished,
+          the data will be moved to: {{ sharedWhereSNICUppmaxWhereAUuid }}. We expect this to
+          occur: {{ sharedWhereSNICUppmaxWhenAUuid }}.
+        {%- endif -%}
+        </p>
+      {%- elif sharedWhereAUuid == uuids.sharedWhereOwnAUuid -%}
+        <p> The project will be stored at our own backed-up network system. </p>
+      {%- elif sharedWhereAUuid == uuids.sharedWhereOtherAUuid -%}
+        {%- set sharedWhereOtherPath = [sharedWherePath, uuids.sharedWhereOtherAUuid, uuids.sharedWhereOtherQUuid]|reply_path -%}
+        {%- set sharedWhereOther = repliesMap[sharedWhereOtherPath]|reply_str_value -%}
+        <p> Project storage and back-up: {{ sharedWhereOther }} </p>
+      {%- endif -%}
+      {%- set sharedReliablePath = [sharedWorkspacePath, uuids.sharedWorkspaceYesAUuid, uuids.sharedReliableQUuid]|reply_path -%}
+      {%- set sharedReliableAUuid = repliesMap[sharedReliablePath]|reply_str_value -%}
+      {%- if sharedReliableAUuid == uuids.sharedReliableExploreAUuid -%}
+        {%- set sharedReliablePreventLossPath = [sharedReliablePath, uuids.sharedReliableExploreAUuid, uuids.sharedReliablePreventLossQUuid]|reply_path -%}
+        {%- set sharedReliablePreventLossAUuid = repliesMap[sharedReliablePreventLossPath]|reply_str_value -%}
+        {%- set sharedReliableBackupPath = [sharedReliablePath, uuids.sharedReliableExploreAUuid, uuids.sharedReliableBackupQUuid]|reply_path -%}
+        {%- set sharedReliableBackupAUuid = repliesMap[sharedReliableBackupPath]|reply_str_value -%}
+        {%- if sharedReliablePreventLossAUuid or sharedReliableBackupAUuid -%}
+          <p>
+          {%- if sharedReliablePreventLossAUuid == uuids.sharedReliablePreventLossSufficientAUuid %}
+            The work space provides sufficient guarantees in terms of preventing a total loss of data.
+          {%- elif sharedReliablePreventLossAUuid == uuids.sharedReliablePreventLossStoredAUuid %}
+            All essential data is also stored elsewhere to prevent a total loss of data.
+          {%- endif -%}
+          {%- if sharedReliableBackupAUuid == uuids.sharedReliableBackupCopyLeftAUuid %}
+            Backup of project data that is not in the work space is left to the project participants.
+          {%- elif sharedReliableBackupAUuid == uuids.sharedReliableBackupCopyNoDataAUuid %}
+            Data is stored only in the work space, therefore additional backup copies of files outside work space are necessary.
+          {%- elif sharedReliableBackupAUuid == uuids.sharedReliableBackupCopyAllSomewhereAUuid %}
+            All project data stored outside of the working area will be adequately backed up.
+          {%- elif sharedReliableBackupAUuid == uuids.sharedReliableBackupCopyBackupsAUuid %}
+            We will make (automated) backups of all data stored outside of the working area.
+          {%- endif -%}
+          </p>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+
+</div>

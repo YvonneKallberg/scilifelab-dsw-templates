@@ -1,0 +1,26 @@
+<header>
+  <p class="dmp"></p>
+  <h1>
+    {{ ctx.questionnaireName }}
+  </h1>
+ <div>
+      <dt>Based on</dt>
+      <dd>{{ ctx.package.name }}, {{ ctx.package.version }} (<span class="package-id"><span class="organization-id">{{ ctx.package.organizationId }}</span>:<span class="km-id">{{ ctx.package.kmId }}</span>:<span class="version">{{ ctx.package.version }}</span></span>)</dd>
+      {%- if ctx.config.levelsEnabled.levelsEnabled -%}
+        <dt>Project phase</dt>
+        <dd>{{ macros.renderCurrentLevel() }}</dd>
+      {%- endif -%}
+
+      {% for version in ctx.questionnaireVersions if version.uuid == ctx.questionnaireVersion %}
+      <dt>Version</dt>
+      <dd>{{version.name}} ({{ version.createdAt|datetime_format("%d %b %Y") }})</dd>
+      {% endfor %}
+
+      <dt>Generated on</dt>
+      <dd>{{ ctx.createdAt|datetime_format("%d %b %Y") }}</dd>
+    </dl>
+    <p class="dsw">
+      SNIC-SENS abridged Data Management Plan created in Data Stewardship Wizard &laquo;<a href="https://dsw.scilifelab.se" target="_blank">https://dsw.scilifelab.se</a>&raquo;
+    </p>
+  </div>
+</header>
